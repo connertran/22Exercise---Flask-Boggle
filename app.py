@@ -16,10 +16,11 @@ def show_homepage():
   session['board'] = board
   return render_template("homepage.html", board = board)
 
-@app.route('/checkValidWord/')
+@app.route('/checkValidWord', methods=['POST'])
 def check_word_afer_submission():
-  word = request.form['word']
+  word = request.json['word']
   print('___________________word_______________')
   print(word)
+  print(request.json)
   print('___________________word_______________')
   return "hi"

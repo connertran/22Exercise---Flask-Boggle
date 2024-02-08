@@ -9,7 +9,7 @@ const handleSubmit = async (evt) => {
   console.log(inputVal);
 
   try {
-    const sendDataToSever = await axios.post("/checkValidWord/", {
+    const sendDataToSever = await axios.post("/checkValidWord", {
       word: inputVal,
     });
     console.log(sendDataToSever);
