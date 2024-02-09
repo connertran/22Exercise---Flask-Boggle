@@ -1,4 +1,4 @@
-console.log("before click");
+let guessSet = new Set();
 let submitBtn = document.querySelector(".submit-btn");
 const currrentScore = document.querySelector(".current-score");
 let point = document.createElement("span");
@@ -42,34 +42,42 @@ const handleSubmit = async (evt) => {
   evt.preventDefault();
   const inputBox = document.querySelector(".word");
   const inputVal = inputBox.value;
-  console.log("You just clicked");
-  console.log(inputVal);
 
   try {
     const sendDataToSever = await axios.post("/checkValidWord", {
       word: inputVal,
     });
-    if (sendDataToSever.data.result === "ok") {
-      showResponseFromServer("Your word is valid");
-      // updating the point
-      let pointsGet = inputVal.length;
-      currrentScore.removeChild(point);
-      currentPoint = Number(point.innerText);
-      currentPoint += pointsGet;
-      point.innerText = `${currentPoint}`;
-      currrentScore.appendChild(point);
-      // write down client's guess
-      writeDownClientsGuess(inputVal);
+    if (!guessSet.has(inputVal)) {
+      if (sendDataToSever.data.result === "ok") {
+        showResponseFromServer("Your word is valid");
+        // handling duplicate words
+        guessSet.add(inputVal);
+        // updating the point
+        let pointsGet = inputVal.length;
+        currrentScore.removeChild(point);
+        currentPoint = Number(point.innerText);
+        currentPoint += pointsGet;
+        point.innerText = `${currentPoint}`;
+        currrentScore.appendChild(point);
+        // write down client's guess
+        writeDownClientsGuess(inputVal);
+      } else {
+        showResponseFromServer("Your word is invalid");
+      }
     } else {
-      showResponseFromServer("Your word is invalid");
+      return;
     }
-
-    console.log("In try");
   } catch (error) {
     console.error("Error:", error);
-    console.log("In catch");
   }
 };
+
+// updating the score in server
+async function sendScoreToServer() {
+  const postScoreToServer = await axios.post("/score", {
+    score: point.innerText,
+  });
+}
 
 if (submitBtn) {
   // set a timer for 60 sec
@@ -80,6 +88,7 @@ if (submitBtn) {
     if (countdown <= 0) {
       clearInterval(timer);
       disableGame();
+      sendScoreToServer();
     }
   }, 1000);
   submitBtn.addEventListener("click", handleSubmit);

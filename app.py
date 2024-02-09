@@ -25,3 +25,16 @@ def check_word_afer_submission():
  
   return jsonify({'result': response})
 
+@app.route('/score', methods = ['POST'])
+def save_users_score():
+  """recieve client's score from the front-end and update
+    highscore, number of plays in the server"""
+  score = int(request.json['score'])
+  highscore = session.get('highscore', 0)
+  nplays = session.get('nplays', 0)
+
+  session['nplays'] = nplays + 1
+  session['highscore'] = max(score, highscore)
+  
+  
+  return jsonify(brokeRecord = score > highscore)
