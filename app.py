@@ -36,5 +36,5 @@ def save_users_score():
   session['nplays'] = nplays + 1
   session['highscore'] = max(score, highscore)
   
-  
+
   return jsonify(brokeRecord = score > highscore)
