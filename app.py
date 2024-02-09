@@ -1,6 +1,6 @@
-from boggle import Boggle
 from flask import Flask, render_template,request, jsonify, session
 from flask_debugtoolbar import DebugToolbarExtension
+from boggle import Boggle
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "ilovewatchinganime"
@@ -18,9 +18,10 @@ def show_homepage():
 
 @app.route('/checkValidWord', methods=['POST'])
 def check_word_afer_submission():
+  """recieve the word from the client and check if the word is valid or not"""
   word = request.json['word']
-  print('___________________word_______________')
-  print(word)
-  print(request.json)
-  print('___________________word_______________')
-  return "hi"
+  board = session["board"]
+  response = make_boggle_game.check_valid_word(board, word)
+ 
+  return jsonify({'result': response})
+
