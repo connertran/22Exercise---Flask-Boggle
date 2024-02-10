@@ -1,74 +1,71 @@
-console.log("insideboggle");
 class BoggleGame {
   constructor() {
     this.guessSet = new Set();
     this.currentScore = 0;
-    this.pointElement = document.createElement("span");
-    this.pointElement.innerText = 0;
-    this.currentScoreElement = document.querySelector(".current-score");
-    this.currentScoreElement.appendChild(this.pointElement);
+    this.$pointElement = $("<span>").text(0);
+    this.$currentScoreElement = $(".current-score");
+    this.$currentScoreElement.append(this.$pointElement);
     this.timer = null;
     this.countdown = 60;
-    this.wordInputElement = document.querySelector(".word");
-    this.submitButton = document.querySelector(".submit-btn");
-    this.responseDiv = document.querySelector(".response-from-server");
-    this.guessDiv = document.querySelector(".client-correct-guess");
+    this.$wordInputElement = $(".word");
+    this.$submitButton = $(".submit-btn");
+    this.$responseDiv = $(".response-from-server");
+    this.$guessDiv = $(".client-correct-guess");
   }
 
   writeDownClientsGuess(guess) {
-    const newLi = document.createElement("li");
-    newLi.innerText = guess;
-    this.guessDiv.appendChild(newLi);
+    const $newLi = $("<li>").text(guess);
+    this.$guessDiv.append($newLi);
   }
 
   showResponseFromServer(resultFromServer) {
-    const msg = document.createElement("p");
-    msg.innerText = resultFromServer;
-    this.responseDiv.innerHTML = msg.outerHTML;
+    const $msg = $("<p>").text(resultFromServer);
+    this.$responseDiv.html($msg);
   }
 
   updateCountdown() {
-    document.getElementById(
-      "countdown"
-    ).innerText = `Time Left: ${this.countdown} seconds`;
+    $("#countdown").text(`Time Left: ${this.countdown} seconds`);
   }
 
   disableGame() {
-    this.submitButton.removeEventListener("click", this.handleSubmit);
-    this.submitButton.addEventListener("click", (evt) => {
+    this.$submitButton.off("click", this.handleSubmit);
+    this.$submitButton.on("click", (evt) => {
       evt.preventDefault();
       alert("Your time is up!");
     });
-    this.wordInputElement.disabled = true;
+    this.$wordInputElement.prop("disabled", true);
   }
 
   async sendScoreToServer() {
-    const postScoreToServer = await axios.post("/score", {
-      score: this.pointElement.innerText,
-    });
+    try {
+      await $.post("/score", { score: this.$pointElement.text() });
+    } catch (error) {
+      console.error("Error:", error);
+    }
   }
 
   handleSubmit = async (evt) => {
     evt.preventDefault();
-    const inputVal = this.wordInputElement.value;
+    const inputVal = this.$wordInputElement.val();
 
     try {
-      const sendDataToSever = await axios.post("/checkValidWord", {
+      const sendDataToServer = await $.post("/checkValidWord", {
         word: inputVal,
       });
+
       if (!this.guessSet.has(inputVal)) {
-        if (sendDataToSever.data.result === "ok") {
+        if (sendDataToServer.result === "ok") {
           this.showResponseFromServer("Your word is valid");
-          // handling duplicate words
+          // Handling duplicate words
           this.guessSet.add(inputVal);
-          // updating the point
+          // Updating the point
           let pointsGet = inputVal.length;
-          this.currentScoreElement.removeChild(this.pointElement);
-          let currentPoint = Number(this.pointElement.innerText);
+          this.$pointElement.remove();
+          let currentPoint = Number(this.$pointElement.text());
           currentPoint += pointsGet;
-          this.pointElement.innerText = `${currentPoint}`;
-          this.currentScoreElement.appendChild(this.pointElement);
-          // write down client's guess
+          this.$pointElement.text(`${currentPoint}`);
+          this.$currentScoreElement.append(this.$pointElement);
+          // Write down client's guess
           this.writeDownClientsGuess(inputVal);
         } else {
           this.showResponseFromServer("Your word is invalid");
@@ -92,7 +89,7 @@ class BoggleGame {
         this.sendScoreToServer();
       }
     }, 1000);
-    this.submitButton.addEventListener("click", this.handleSubmit);
+    this.$submitButton.on("click", this.handleSubmit);
   }
 }
 
