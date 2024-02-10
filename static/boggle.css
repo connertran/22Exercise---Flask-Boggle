@@ -1,3 +1,15 @@
+*{
+  font-family: Arial;
+}
+h1{
+  text-align: center;
+}
+.flexbox-div{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+
+}
 #board {
   border-collapse: collapse;
   width: 250px;

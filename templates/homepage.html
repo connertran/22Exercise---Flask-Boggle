@@ -2,29 +2,35 @@
 <link rel="stylesheet" href="static/boggle.css" />
 {%endblock%} {%block content%}
 <h1>Welcome to the Boggle Game!!</h1>
-<section id="boggle">
-  <table id="board">
-    <tbody>
-      {%for row in board%}
-      <tr>
-        {%for cell in row%}
-        <td>{{cell}}</td>
-        {%endfor%}
-      </tr>
-      {%endfor%}
-    </tbody>
-  </table>
-</section>
-<h2></h2>
-<form class="add-word" method="post">
-  <input name="word" class="word" autofocus />
-  <button class="submit-btn">Enter</button>
-</form>
-<h2 class="current-score">Score:</h2>
-<h2 id="countdown">Time Left: 60 seconds</h2>
-<div class="response-from-server"></div>
-<div>
-  <ul class="client-correct-guess"></ul>
+<div class="flexbox-div">
+  <div class="board-game-div">
+    <section id="boggle">
+      <table id="board">
+        <tbody>
+          {%for row in board%}
+          <tr>
+            {%for cell in row%}
+            <td>{{cell}}</td>
+            {%endfor%}
+          </tr>
+          {%endfor%}
+        </tbody>
+      </table>
+    </section>
+  </div>
+  <div class="active-area-div">
+    <h2></h2>
+    <form class="add-word" method="post">
+      <input name="word" class="word" autofocus />
+      <button class="submit-btn">Enter</button>
+    </form>
+    <h2 class="current-score">Score:</h2>
+    <h2 id="countdown">Time Left: 60 seconds</h2>
+    <div class="response-from-server"></div>
+    <div>
+      <ul class="client-correct-guess"></ul>
+    </div>
+  </div>
 </div>
 {%endblock%} {%block javascript%}
 <script src="http://unpkg.com/jquery"></script>
